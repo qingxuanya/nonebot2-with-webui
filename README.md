@@ -111,7 +111,21 @@ except ImportError as e:
 若提示依赖缺失，执行``` pip install -r requirements.txt ```安装所需包。
 
 ## 相关截图 
-[!登录界面](https://github.com/qingxuanya/nonebot2-with-webui/raw/main/config/1.jpeg)]
+### 登录界面
+![登录界面](./config/2.jpeg)
+### 仪表盘
+![仪表盘](./config/1.jpeg)
+### 系统设置
+![系统设置](./config/3.jpeg)
+### 群组管理
+![群组管理](./config/4.jpeg)
+### 插件管理
+![插件管理](./config/5.jpeg)
+### 用户管理
+![用户管理](./config/6.jpeg)
+### 日志管理
+![日志管理](./config/7.jpeg)
+
 
 ## 许可证
 本项目遵循 MIT 许可证，欢迎贡献与二次开发。
