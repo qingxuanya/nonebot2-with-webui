@@ -14,16 +14,9 @@ import sys
 
 async def setup_application():
     """设置应用程序"""
-    # 创建FastAPI应用
     app = create_application()
-
-    # 初始化数据库
     await init_database()
-
-    # 注册模块
     await register_modules(app)
-
-    # 注册Web路由
     register_web_routes(app)
 
     return app
@@ -32,10 +25,8 @@ async def setup_application():
 async def initialize_nonebot():
     """初始化NoneBot实例"""
     try:
-        # 确保数据库已经完全初始化
         await asyncio.sleep(1)
 
-        # 加载默认配置初始化NoneBot
         await nonebot_manager.load_config()
         success = await nonebot_manager.start_nonebot()
         if success:
@@ -51,19 +42,14 @@ async def main():
     print("正在启动NoneBot WebUI管理系统...")
 
     try:
-        # 设置Web应用和数据库
         app = await setup_application()
 
-        # 等待数据库完全就绪后再启动NoneBot
         await asyncio.sleep(2)
 
-        # 初始化NoneBot
         await initialize_nonebot()
 
-        # 配置信号处理
         def signal_handler(signum, frame):
             print(f"\n接收到信号 {signum}，正在关闭...")
-            # 关闭NoneBot
             asyncio.create_task(nonebot_manager.shutdown_nonebot())
             sys.exit(0)
 
@@ -92,7 +78,6 @@ async def main():
     except Exception as e:
         print(f"启动失败: {e}")
     finally:
-        # 清理资源
         await close_database()
 
 
