@@ -111,3 +111,6 @@ except ImportError as e:
 若提示依赖缺失，执行``` pip install -r requirements.txt ```安装所需包。
 ## 许可证
 本项目遵循 MIT 许可证，欢迎贡献与二次开发。
+
+## Deepwiki
+访问：<https://deepwiki.com/qingxuanya/nonebot2-with-webui/1-overview>
