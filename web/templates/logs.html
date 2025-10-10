@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}日志查看 - NoneBot管理系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-journal-text"></i> 日志查看</h2>
+</div>
+
+<!-- 标签页导航 -->
+<ul class="nav nav-tabs mb-4" id="logsTabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#messageLogsTab">消息日志</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#systemLogsTab">系统日志</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#operationLogsTab">操作日志</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- 消息日志标签页 -->
+    <div class="tab-pane fade show active" id="messageLogsTab">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">消息日志</h5>
+            </div>
+            <div class="card-body">
+                <!-- 搜索条件 -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="messageGroupId" placeholder="群组ID">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="messageUserId" placeholder="用户ID">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="messageStartDate">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="messageEndDate">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" id="searchMessageLogsBtn">搜索</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="messageLogsTable">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>群组</th>
+                                <th>用户</th>
+                                <th>消息内容</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="messageLogsPagination">
+                        <!-- 通过JavaScript动态生成 -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统日志标签页 -->
+    <div class="tab-pane fade" id="systemLogsTab">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">系统日志</h5>
+            </div>
+            <div class="card-body">
+                <!-- 搜索条件 -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-2">
+                        <select class="form-select" id="systemLogLevel">
+                            <option value="">所有级别</option>
+                            <option value="DEBUG">DEBUG</option>
+                            <option value="INFO">INFO</option>
+                            <option value="WARNING">WARNING</option>
+                            <option value="ERROR">ERROR</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="systemLogModule" placeholder="模块名称">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="systemLogDays">
+                            <option value="1">最近1天</option>
+                            <option value="7" selected>最近7天</option>
+                            <option value="30">最近30天</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" id="searchSystemLogsBtn">搜索</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="systemLogsTable">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>级别</th>
+                                <th>模块</th>
+                                <th>消息</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="systemLogsPagination">
+                        <!-- 通过JavaScript动态生成 -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作日志标签页 -->
+    <div class="tab-pane fade" id="operationLogsTab">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">操作日志</h5>
+            </div>
+            <div class="card-body">
+                <!-- 搜索条件 -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="operationUser" placeholder="操作者">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="operationType" placeholder="操作类型">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="operationDays">
+                            <option value="7">最近7天</option>
+                            <option value="30" selected>最近30天</option>
+                            <option value="90">最近90天</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" id="searchOperationLogsBtn">搜索</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="operationLogsTable">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>操作者</th>
+                                <th>操作类型</th>
+                                <th>目标</th>
+                                <th>描述</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="operationLogsPagination">
+                        <!-- 通过JavaScript动态生成 -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 日志详情模态框 -->
+<div class="modal fade" id="logDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">日志详情</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <pre id="logDetailContent" class="p-3 bg-light rounded" style="max-height: 400px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/logs.js"></script>
+{% endblock %}

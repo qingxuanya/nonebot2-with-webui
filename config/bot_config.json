@@ -1,0 +1,27 @@
+{
+  "onebot": {
+    "ws_url": "ws://127.0.0.1:8081/onebot/v11/ws",
+    "http_url": "http://127.0.0.1:5700",
+    "access_token": "",
+    "secret": ""
+  },
+  "bot": {
+    "superusers": [],
+    "nickname": [
+      "Bot"
+    ],
+    "command_start": [
+      "/",
+      ""
+    ],
+    "command_sep": [
+      "."
+    ],
+    "session_expire_timeout": 120
+  },
+  "webui": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "secret_key": "your-secret-key-change-in-production"
+  }
+}
