@@ -7,12 +7,10 @@ import asyncio
 import sys
 import os
 
-# 添加当前目录到Python路径
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 async def main():
-    """主启动函数"""
     try:
         from main import main as app_main
         await app_main()
