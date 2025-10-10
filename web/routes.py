@@ -5,12 +5,10 @@ from modules.auth.service import AuthService
 
 async def auth_middleware(request: Request):
     """认证中间件"""
-    # 跳过登录页面和静态文件
     if request.url.path in ['/login', '/'] or request.url.path.startswith('/static') or request.url.path.startswith(
             '/api/auth'):
         return
 
-    # 检查认证
     token = request.cookies.get("access_token")
     if not token:
         return RedirectResponse(url="/login")
@@ -22,8 +20,6 @@ async def auth_middleware(request: Request):
 
 def register_web_routes(app: FastAPI):
     """注册所有Web路由"""
-
-    # 添加认证中间件
     @app.middleware("http")
     async def add_auth_middleware(request: Request, call_next):
         response = await auth_middleware(request)
@@ -46,7 +42,6 @@ def register_web_routes(app: FastAPI):
     app.include_router(log_router)
     app.include_router(user_router)
 
-    # Web页面路由
     from .server import WebUIServer
     web_ui = WebUIServer(app)
     web_ui.setup_routes()
