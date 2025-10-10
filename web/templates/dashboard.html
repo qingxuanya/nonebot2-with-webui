@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}仪表板 - NoneBot管理系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 系统状态卡片 -->
+    <div class="col-md-3 mb-4">
+        <div class="card bg-primary text-white" id="botStatusCard">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title" id="botStatus">离线</h4>
+                        <p class="card-text">机器人状态</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-robot" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title" id="totalUsers">0</h4>
+                        <p class="card-text">总用户数</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-people" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title" id="totalGroups">0</h4>
+                        <p class="card-text">活跃群组</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-chat-dots" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title" id="todayMessages">0</h4>
+                        <p class="card-text">今日消息</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-chat-text" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 快速操作 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-lightning"></i> 快速操作</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button class="btn btn-outline-success w-100" id="startBotBtn">
+                            <i class="bi bi-play-circle"></i> 启动机器人
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-danger w-100" id="stopBotBtn">
+                            <i class="bi bi-stop-circle"></i> 停止机器人
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100" id="restartBotBtn">
+                            <i class="bi bi-arrow-repeat"></i> 重启机器人
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <a href="/system" class="btn btn-outline-info w-100">
+                            <i class="bi bi-gear"></i> 系统设置
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统信息 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> 系统信息</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-muted">运行时间</small>
+                        <p id="uptime">--</p>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">插件数量</small>
+                        <p id="pluginCount">--</p>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">启用插件</small>
+                        <p id="enabledPlugins">--</p>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">最后重启</small>
+                        <p id="lastRestart">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 最近活动 -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-activity"></i> 最近活动</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="recentActivityTable">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>用户</th>
+                                <th>群组</th>
+                                <th>内容</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}系统设置 - NoneBot管理系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-gear"></i> 系统设置</h2>
+</div>
+
+<div class="row">
+    <!-- 系统状态 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> 系统状态</h5>
+            </div>
+            <div class="card-body">
+                <div id="systemStatus">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速操作 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-lightning"></i> 快速操作</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success" id="startBotBtn">
+                        <i class="bi bi-play-circle"></i> 启动机器人
+                    </button>
+                    <button class="btn btn-warning" id="restartBotBtn">
+                        <i class="bi bi-arrow-repeat"></i> 重启机器人
+                    </button>
+                    <button class="btn btn-danger" id="stopBotBtn">
+                        <i class="bi bi-stop-circle"></i> 停止机器人
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OneBot配置 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="bi bi-plug"></i> OneBot配置</h5>
+    </div>
+    <div class="card-body">
+        <form id="onebotConfigForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="wsUrl" class="form-label">WebSocket URL</label>
+                        <input type="url" class="form-control" id="wsUrl" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="httpUrl" class="form-label">HTTP URL</label>
+                        <input type="url" class="form-control" id="httpUrl">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="accessToken" class="form-label">Access Token</label>
+                        <input type="text" class="form-control" id="accessToken" placeholder="可选">
+                    </div>
+                    <div class="mb-3">
+                        <label for="secret" class="form-label">Secret</label>
+                        <input type="text" class="form-control" id="secret" placeholder="可选">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">保存配置</button>
+        </form>
+    </div>
+</div>
+
+<!-- 机器人配置 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="bi bi-robot"></i> 机器人配置</h5>
+    </div>
+    <div class="card-body">
+        <form id="botConfigForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="nickname" class="form-label">机器人昵称</label>
+                        <input type="text" class="form-control" id="nickname" required>
+                        <div class="form-text">多个昵称用逗号分隔</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="commandStart" class="form-label">命令起始符</label>
+                        <input type="text" class="form-control" id="commandStart" required>
+                        <div class="form-text">多个起始符用逗号分隔，如 "/,!,"</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="superusers" class="form-label">超级用户</label>
+                        <input type="text" class="form-control" id="superusers">
+                        <div class="form-text">多个用户ID用逗号分隔</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sessionTimeout" class="form-label">会话超时时间（秒）</label>
+                        <input type="number" class="form-control" id="sessionTimeout" value="120" min="60">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">保存配置</button>
+        </form>
+    </div>
+</div>
+
+<!-- 系统信息 -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="bi bi-cpu"></i> 系统信息</h5>
+    </div>
+    <div class="card-body">
+        <div class="row" id="systemInfo">
+            <!-- 通过JavaScript动态加载 -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/system.js"></script>
+{% endblock %}
