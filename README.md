@@ -29,7 +29,7 @@
 ```bash
 pip install -r requirements.txt
 ```
-启动服务
+### 启动服务
 ```bash
 # 使用启动脚本
 python start.py
@@ -39,7 +39,7 @@ python main.py
 ```
 ## 访问系统
 服务启动后，访问``` http://localhost:8080/web_ui ```进入管理界面，默认账号密码为``` admin/admin123```（首次登录后请及时修改密码）。
-项目结构
+### 项目结构
 ```plaintext
 nonebot2-with-webui/
 ├── core/              # 核心功能模块
