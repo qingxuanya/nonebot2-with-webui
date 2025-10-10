@@ -109,6 +109,10 @@ except ImportError as e:
     sys.exit(1)
 ```
 若提示依赖缺失，执行``` pip install -r requirements.txt ```安装所需包。
+
+## 相关截图 
+[!登录界面](https://github.com/qingxuanya/nonebot2-with-webui/raw/main/config/1.jpeg)]
+
 ## 许可证
 本项目遵循 MIT 许可证，欢迎贡献与二次开发。
 
