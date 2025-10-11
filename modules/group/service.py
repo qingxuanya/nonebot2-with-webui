@@ -2,7 +2,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy import select, func, and_
 from .models import Group, GroupUser
 from core.database import get_db_session
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class GroupService:
@@ -202,3 +202,145 @@ class GroupService:
             user.ban_time = None
             await session.commit()
             return True
+
+    @staticmethod
+    async def get_group_stats() -> Dict[str, Any]:
+        """获取群组统计信息"""
+        async with get_db_session() as session:
+            # 总群组数
+            total_groups = await session.execute(select(func.count(Group.id)))
+            total = total_groups.scalar_one()
+
+            # 启用群组数
+            enabled_groups = await session.execute(
+                select(func.count(Group.id)).where(Group.is_enabled == True)
+            )
+            enabled = enabled_groups.scalar_one()
+
+            # 今日活跃群组
+            today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            active_today = await session.execute(
+                select(func.count(Group.id)).where(Group.last_active >= today_start)
+            )
+            active_today_count = active_today.scalar_one()
+
+            return {
+                "total_groups": total,
+                "enabled_groups": enabled,
+                "active_today": active_today_count
+            }
+
+    @staticmethod
+    async def update_group_info(
+            group_id: str,
+            group_name: str = None,
+            last_active: datetime = None
+    ):
+        """更新群组信息"""
+        async with get_db_session() as session:
+            try:
+                # 查找现有群组
+                result = await session.execute(
+                    select(Group).where(Group.group_id == group_id)
+                )
+                group = result.scalar_one_or_none()
+
+                if group:
+                    # 更新现有群组
+                    if group_name:
+                        group.group_name = group_name
+                    if last_active:
+                        group.last_active = last_active
+                    else:
+                        group.last_active = datetime.now()
+
+                    # 更新成员数量
+                    group.current_users = await GroupService.get_group_user_count(group_id)
+                else:
+                    # 创建新群组
+                    group = Group(
+                        group_id=group_id,
+                        group_name=group_name or f"群{group_id}",
+                        last_active=last_active or datetime.now(),
+                        current_users=1,
+                        created_time=datetime.now()
+                    )
+                    session.add(group)
+
+                await session.commit()
+                print(f"✅ 群组信息更新: {group_id}")
+            except Exception as e:
+                print(f"❌ 更新群组信息失败: {e}")
+                await session.rollback()
+
+    @staticmethod
+    async def update_group_user(
+            group_id: str,
+            user_id: str,
+            user_name: str = None,
+            user_card: str = None,
+            last_speak: datetime = None,
+            join_time: datetime = None,
+            message_count: int = None
+    ):
+        """更新群组成员信息"""
+        async with get_db_session() as session:
+            try:
+                # 查找现有成员
+                result = await session.execute(
+                    select(GroupUser).where(
+                        GroupUser.group_id == group_id,
+                        GroupUser.user_id == user_id
+                    )
+                )
+                group_user = result.scalar_one_or_none()
+
+                if group_user:
+                    # 更新现有成员
+                    if user_name: group_user.user_name = user_name
+                    if user_card: group_user.user_card = user_card
+                    if last_speak: group_user.last_speak = last_speak
+                    if message_count is not None:
+                        group_user.message_count = message_count
+                    else:
+                        # 如果没有指定message_count，自动增加1
+                        group_user.message_count += 1
+                else:
+                    # 创建新成员
+                    group_user = GroupUser(
+                        group_id=group_id,
+                        user_id=user_id,
+                        user_name=user_name or f"用户{user_id}",
+                        user_card=user_card,
+                        join_time=join_time or datetime.now(),
+                        last_speak=last_speak or datetime.now(),
+                        message_count=message_count or 1
+                    )
+                    session.add(group_user)
+
+                await session.commit()
+                print(f"✅ 群组成员更新: {group_id} - {user_id}")
+            except Exception as e:
+                print(f"❌ 更新群组成员失败: {e}")
+                await session.rollback()
+
+    @staticmethod
+    async def get_group_user_count(group_id: str) -> int:
+        """获取群组成员数量"""
+        async with get_db_session() as session:
+            result = await session.execute(
+                select(func.count(GroupUser.id)).where(GroupUser.group_id == group_id)
+            )
+            return result.scalar_one()
+
+    @staticmethod
+    async def get_chatty_users(group_id: str, limit: int = 10):
+        """获取话最多的用户"""
+        async with get_db_session() as session:
+            result = await session.execute(
+                select(GroupUser)
+                .where(GroupUser.group_id == group_id)
+                .order_by(GroupUser.message_count.desc())
+                .limit(limit)
+            )
+            return result.scalars().all()

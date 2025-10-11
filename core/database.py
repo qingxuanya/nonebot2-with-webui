@@ -1,7 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import os
-import asyncio
 
 # 必须在导入任何模型之前创建Base
 Base = declarative_base()

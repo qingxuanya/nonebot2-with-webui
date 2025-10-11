@@ -1,7 +1,7 @@
 {
   "onebot": {
     "ws_url": "ws://127.0.0.1:8081/onebot/v11/ws",
-    "http_url": "http://127.0.0.1:5700",
+    "http_url": "http://127.0.0.1:8081/onebot/v11/",
     "access_token": "",
     "secret": ""
   },

@@ -114,3 +114,47 @@ async def update_bot_config(request: Request, config: dict):
         return {"message": "配置更新成功"}
     else:
         raise HTTPException(status_code=500, detail="配置更新失败")
+
+
+
+@router.get("/dashboard/stats")
+async def get_dashboard_stats(request: Request):
+    """获取仪表板完整统计数据"""
+    token = request.cookies.get("access_token")
+    if not verify_token(token):
+        raise HTTPException(status_code=401, detail="未授权")
+
+    try:
+        from modules.log.service import LogService
+        from modules.user.service import UserService
+        from modules.plugin.service import PluginService
+        from modules.group.service import GroupService
+
+        # 并行获取所有统计数据
+        user_stats, plugin_stats, log_stats, group_stats = await asyncio.gather(
+            UserService.get_user_stats(),
+            PluginService.get_plugin_stats(),
+            LogService.get_log_stats(),
+            GroupService.get_group_stats(),
+            return_exceptions=True
+        )
+
+        # 处理可能的异常
+        if isinstance(user_stats, Exception): user_stats = {}
+        if isinstance(plugin_stats, Exception): plugin_stats = {}
+        if isinstance(log_stats, Exception): log_stats = {}
+        if isinstance(group_stats, Exception): group_stats = {}
+
+        return {
+            "success": True,
+            "data": {
+                "user_stats": user_stats,
+                "plugin_stats": plugin_stats,
+                "log_stats": log_stats,
+                "group_stats": group_stats
+            }
+        }
+
+    except Exception as e:
+        print(f"获取仪表板数据失败: {e}")
+        return {"success": False, "error": str(e)}

@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
 from datetime import datetime, timedelta
-import secrets
 from core.database import Base
 
 

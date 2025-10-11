@@ -1,6 +1,3 @@
-import nonebot
-from nonebot.adapters.onebot.v11 import Adapter as OneBotV11Adapter
-from fastapi import FastAPI
 import uvicorn
 import asyncio
 from core.application import create_application
@@ -61,11 +58,11 @@ async def main():
         await initialize_nonebot()
 
         # 配置信号处理
+        shutdown_event = asyncio.Event()
+
         def signal_handler(signum, frame):
             print(f"\n接收到信号 {signum}，正在关闭...")
-            # 关闭NoneBot
-            asyncio.create_task(nonebot_manager.shutdown_nonebot())
-            sys.exit(0)
+            shutdown_event.set()
 
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
@@ -82,24 +79,57 @@ async def main():
 
         print("=" * 50)
         print("WebUI管理系统启动成功!")
-        print("访问地址: http://localhost:8080/web_ui")
+        print("访问地址: http://127.0.0.1:8080")
         print("默认管理员账户: admin / admin123")
         print("按 Ctrl+C 退出")
         print("=" * 50)
 
-        await server.serve()
+        # 创建服务器任务
+        server_task = asyncio.create_task(server.serve())
+
+        try:
+            # 等待关闭事件或服务器完成
+            await asyncio.wait_for(shutdown_event.wait(), timeout=None)
+
+            print("🛑 正在关闭服务器...")
+
+            # 优雅关闭NoneBot
+            if nonebot_manager.is_running:
+                print("🛑 正在关闭NoneBot实例...")
+                await nonebot_manager.shutdown_nonebot()
+
+            # 关闭服务器
+            server.should_exit = True
+            if not server_task.done():
+                server_task.cancel()
+                try:
+                    await asyncio.wait_for(server_task, timeout=5.0)
+                except (asyncio.CancelledError, asyncio.TimeoutError):
+                    pass
+
+        except asyncio.CancelledError:
+            print("⏹️ 服务器任务被取消")
+        except Exception as e:
+            print(f"关闭过程中出错: {e}")
 
     except Exception as e:
         print(f"启动失败: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         # 清理资源
+        print("🧹 清理资源...")
         await close_database()
+        print("✅ 程序已退出")
 
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n程序已退出")
+        print("\n程序已被用户中断")
     except Exception as e:
         print(f"程序异常: {e}")
+        import traceback
+
+        traceback.print_exc()

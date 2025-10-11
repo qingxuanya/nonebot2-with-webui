@@ -86,3 +86,25 @@ async def disable_group_plugin(request: Request, plugin_name: str, group_id: str
         return {"success": True, "message": "群组插件已禁用"}
     else:
         raise HTTPException(status_code=500, detail="操作失败")
+
+
+# 新增：获取群组插件设置
+@router.get("/groups/{group_id}/settings")
+async def get_group_plugin_settings(
+    request: Request,
+    group_id: str
+):
+    """获取群组插件设置"""
+    token = request.cookies.get("access_token")
+    if not verify_token(token):
+        raise HTTPException(status_code=401, detail="未授权")
+
+    try:
+        settings = await PluginService.get_group_plugin_settings(group_id)
+        return {
+            "settings": settings,
+            "success": True
+        }
+    except Exception as e:
+        print(f"获取群组插件设置失败: {e}")
+        raise HTTPException(status_code=500, detail="获取群组插件设置失败")

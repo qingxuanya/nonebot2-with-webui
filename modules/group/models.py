@@ -30,7 +30,7 @@ class GroupUser(Base):
     user_card = Column(String(100))  # 群名片
     join_time = Column(DateTime)  # 加群时间
     last_speak = Column(DateTime)  # 最后发言时间
-    message_count = Column(Integer, default=0)  # 消息数量
+    message_count = Column(Integer, default=0)  # 消息数量 - 重要：统计谁话多
     role = Column(String(20), default="member")  # 角色: owner/admin/member
     is_banned = Column(Boolean, default=False)  # 是否被封禁
     ban_reason = Column(String(200))

@@ -84,15 +84,127 @@
 </div>
 
 <!-- 用户详情模态框 -->
+<!-- 在 userDetailModal 的 modal-body 中添加新的标签页 -->
 <div class="modal fade" id="userDetailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">用户详情</h5>
+                <h5 class="modal-title">用户详情 - <span id="userDetailUserId"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" id="userDetailContent">
-                <!-- 通过JavaScript动态加载 -->
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="userDetailTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#userInfoTab">基本信息</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#userPrivateHistoryTab">私聊历史</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#userGroupHistoryTab">群聊历史</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#userPermissionsTab">权限信息</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="userDetailContent">
+                    <div class="tab-pane fade show active" id="userInfoTab">
+                        <!-- 基本信息内容 -->
+                    </div>
+
+                    <div class="tab-pane fade" id="userPrivateHistoryTab">
+                        <!-- 私聊历史内容 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">私聊消息记录</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <input type="date" class="form-control" id="privateStartDate">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="date" class="form-control" id="privateEndDate">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-primary w-100" onclick="usersManager.loadPrivateHistory()">
+                                                <i class="bi bi-search"></i> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="message-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 1rem;">
+                                    <div id="privateHistoryContent" class="message-list">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-chat-dots" style="font-size: 2rem;"></i>
+                                            <p class="mt-2">暂无私聊消息记录</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <nav aria-label="私聊消息分页">
+                                        <ul class="pagination justify-content-center" id="privateHistoryPagination">
+                                            <!-- 分页将通过JavaScript动态生成 -->
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="userGroupHistoryTab">
+                        <!-- 群聊历史内容 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">群聊消息记录</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-md-3">
+                                            <select class="form-select" id="groupHistoryFilter">
+                                                <option value="">所有群组</option>
+                                                <!-- 群组选项将通过JavaScript动态生成 -->
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="date" class="form-control" id="groupStartDate">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="date" class="form-control" id="groupEndDate">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button class="btn btn-primary w-100" onclick="usersManager.loadGroupHistory()">
+                                                <i class="bi bi-search"></i> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="message-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 1rem;">
+                                    <div id="groupHistoryContent" class="message-list">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-people" style="font-size: 2rem;"></i>
+                                            <p class="mt-2">暂无群聊消息记录</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <nav aria-label="群聊消息分页">
+                                        <ul class="pagination justify-content-center" id="groupHistoryPagination">
+                                            <!-- 分页将通过JavaScript动态生成 -->
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="userPermissionsTab">
+                        <!-- 权限信息内容 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>

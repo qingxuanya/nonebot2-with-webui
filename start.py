@@ -45,4 +45,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # 启动应用
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n程序已退出")

@@ -33,31 +33,58 @@ class PluginsManager {
     }
 
     setupEventListeners() {
-        // 搜索功能
-        document.getElementById('searchBtn')?.addEventListener('click', () => this.handleSearch());
-        document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.handleSearch();
-        });
-        document.getElementById('enabledFilter')?.addEventListener('change', () => this.handleSearch());
+        // 搜索功能 - 修复事件监听
+        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.getElementById('searchInput');
+        const enabledFilter = document.getElementById('enabledFilter');
+
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => this.handleSearch());
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.handleSearch();
+            });
+        }
+
+        if (enabledFilter) {
+            enabledFilter.addEventListener('change', () => this.handleSearch());
+        }
 
         // 刷新按钮
-        document.getElementById('refreshPluginsBtn')?.addEventListener('click', () => {
-            this.loadPlugins();
-            this.loadPluginStats();
-        });
+        const refreshBtn = document.getElementById('refreshPluginsBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                this.loadPlugins();
+                this.loadPluginStats();
+            });
+        }
 
         // 群组设置保存
-        document.getElementById('saveGroupSettingsBtn')?.addEventListener('click', () => this.saveGroupSettings());
+        const saveBtn = document.getElementById('saveGroupSettingsBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => this.saveGroupSettings());
+        }
     }
 
     async loadPlugins(page = 1) {
         this.currentPage = page;
 
-        const params = new URLSearchParams({
-            page: page,
-            page_size: this.pageSize,
-            ...this.searchParams
-        });
+        // 构建查询参数 - 修复参数传递
+        const params = new URLSearchParams();
+        params.append('page', page);
+        params.append('page_size', this.pageSize);
+
+        // 添加搜索参数
+        if (this.searchParams.search) {
+            params.append('search', this.searchParams.search);
+        }
+        if (this.searchParams.enabled !== undefined && this.searchParams.enabled !== '') {
+            params.append('enabled', this.searchParams.enabled);
+        }
+
+        console.log('加载插件，参数:', Object.fromEntries(params)); // 调试信息
 
         try {
             const response = await fetch(`/api/plugins?${params}`, {
@@ -69,11 +96,13 @@ class PluginsManager {
             }
 
             const data = await response.json();
+            console.log('插件数据:', data); // 调试信息
+
             this.renderPluginsTable(data.plugins || []);
             this.renderPagination(data.total || 0, data.page || 1, data.page_size || this.pageSize);
         } catch (error) {
             console.error('Failed to load plugins:', error);
-            this.showNotification('加载插件列表失败', 'error');
+            this.showNotification('加载插件列表失败: ' + error.message, 'error');
         }
     }
 
@@ -97,10 +126,18 @@ class PluginsManager {
     renderPluginStats(stats) {
         if (!stats) return;
 
-        document.getElementById('totalPlugins').textContent = stats.total_plugins || 0;
-        document.getElementById('enabledPlugins').textContent = stats.enabled_plugins || 0;
-        document.getElementById('disabledPlugins').textContent = stats.disabled_plugins || 0;
-        document.getElementById('groupSettings').textContent = stats.group_settings || 0;
+        // 安全地更新统计卡片
+        const updateElement = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value || 0;
+            }
+        };
+
+        updateElement('totalPlugins', stats.total_plugins);
+        updateElement('enabledPlugins', stats.enabled_plugins);
+        updateElement('disabledPlugins', stats.disabled_plugins);
+        updateElement('groupSettings', stats.group_settings);
     }
 
     renderPluginsTable(plugins) {
@@ -162,7 +199,7 @@ class PluginsManager {
                 tbody.appendChild(row);
             });
         } else {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center">暂无插件数据</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">暂无插件数据</td></tr>';
         }
     }
 
@@ -185,7 +222,10 @@ class PluginsManager {
         pagination.appendChild(prevLi);
 
         // 页码
-        for (let i = 1; i <= totalPages; i++) {
+        const startPage = Math.max(1, page - 2);
+        const endPage = Math.min(totalPages, startPage + 4);
+
+        for (let i = startPage; i <= endPage; i++) {
             const li = document.createElement('li');
             li.className = `page-item ${i === page ? 'active' : ''}`;
             li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
@@ -208,11 +248,21 @@ class PluginsManager {
     }
 
     handleSearch() {
-        this.searchParams = {
-            search: document.getElementById('searchInput')?.value || '',
-            enabled: document.getElementById('enabledFilter')?.value || undefined
-        };
+        const searchInput = document.getElementById('searchInput');
+        const enabledFilter = document.getElementById('enabledFilter');
 
+        // 修复搜索参数处理
+        this.searchParams = {};
+
+        if (searchInput && searchInput.value.trim()) {
+            this.searchParams.search = searchInput.value.trim();
+        }
+
+        if (enabledFilter && enabledFilter.value !== '') {
+            this.searchParams.enabled = enabledFilter.value;
+        }
+
+        console.log('搜索参数:', this.searchParams); // 调试信息
         this.loadPlugins(1);
     }
 
@@ -386,29 +436,44 @@ class PluginsManager {
     }
 
     showNotification(message, type = 'info') {
-        if (window.webUIManager) {
-            window.webUIManager.showNotification(message, type);
-        } else {
-            // 简单的通知实现
-            const alertClass = type === 'success' ? 'alert-success' :
-                              type === 'error' ? 'alert-danger' : 'alert-info';
+        // 使用 Bootstrap 的 toast 通知
+        const toastContainer = document.getElementById('toastContainer') || this.createToastContainer();
 
-            const alert = document.createElement('div');
-            alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
-            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.id = toastId;
 
-            document.body.appendChild(alert);
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
 
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.remove();
-                }
-            }, 5000);
-        }
+        toastContainer.appendChild(toast);
+
+        const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+        bsToast.show();
+
+        // 自动移除DOM元素
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    createToastContainer() {
+        const container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container position-fixed top-0 end-0 p-3';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+        return container;
     }
 }
 

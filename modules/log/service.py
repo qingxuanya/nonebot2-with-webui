@@ -217,3 +217,32 @@ class LogService:
                 "today_messages": today_message_count,
                 "system_level_stats": system_level_stats
             }
+
+    @staticmethod
+    async def add_message_log(
+            group_id: str,
+            user_id: str,
+            user_name: str,
+            message_type: str,
+            message_content: str,
+            raw_message: str = ""
+    ):
+        """添加消息日志"""
+        async with get_db_session() as session:
+            try:
+                log = MessageLog(
+                    group_id=group_id,
+                    user_id=user_id,
+                    user_name=user_name,
+                    message_type=message_type,
+                    message_content=message_content,
+                    raw_message=raw_message,
+                    timestamp=datetime.now()  # 自动使用当前时间
+                )
+                session.add(log)
+                await session.commit()
+                return True
+            except Exception as e:
+                print(f"❌ 保存消息日志失败: {e}")
+                await session.rollback()
+                return False

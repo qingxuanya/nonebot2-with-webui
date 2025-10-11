@@ -274,8 +274,7 @@ class UserService:
             total = total_users.scalar_one()
 
             # 活跃用户数（最近7天有活动）
-            week_ago = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            week_ago = week_ago.replace(day=week_ago.day - 7)
+            week_ago = datetime.now() - timedelta(days=7)
             active_users = await session.execute(
                 select(func.count(UserProfile.id)).where(UserProfile.last_active >= week_ago)
             )
@@ -287,17 +286,60 @@ class UserService:
             )
             banned = banned_users.scalar_one()
 
-            # 新增今日用户
-            today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            new_today = await session.execute(
-                select(func.count(UserProfile.id)).where(UserProfile.created_at >= today_start)
-            )
-            new_today_count = new_today.scalar_one()
-
             return {
                 "total_users": total,
                 "active_users": active,
                 "banned_users": banned,
-                "new_today": new_today_count,
                 "active_rate": round((active / total) * 100, 2) if total > 0 else 0
             }
+
+    @staticmethod
+    async def update_user_profile(
+            user_id: str,
+            username: str = None,
+            nickname: str = None,
+            last_active: datetime = None
+    ):
+        """更新用户资料"""
+        async with get_db_session() as session:
+            try:
+                # 查找现有用户
+                result = await session.execute(
+                    select(UserProfile).where(UserProfile.user_id == user_id)
+                )
+                user = result.scalar_one_or_none()
+
+                if user:
+                    # 更新现有用户
+                    if username:
+                        user.username = username
+                    if nickname:
+                        user.nickname = nickname
+                    if last_active:
+                        user.last_active = last_active
+                    else:
+                        user.last_active = datetime.now()
+                else:
+                    # 创建新用户
+                    user = UserProfile(
+                        user_id=user_id,
+                        username=username or f"用户{user_id}",
+                        nickname=nickname,
+                        last_active=last_active or datetime.now()
+                    )
+                    session.add(user)
+
+                    # 同时创建用户统计记录
+                    user_stats = UserStatistics(
+                        user_id=user_id,
+                        total_messages=0,
+                        total_commands=0,
+                        active_days=1
+                    )
+                    session.add(user_stats)
+
+                await session.commit()
+                print(f"✅ 用户资料更新: {user_id}")
+            except Exception as e:
+                print(f"❌ 更新用户资料失败: {e}")
+                await session.rollback()
