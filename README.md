@@ -74,7 +74,7 @@ nonebot2-with-webui/
 ```
 ## 配置说明
 ### 机器人配置
-在 config/bot_config.py 中配置 NoneBot 相关参数：
+在 config/bot_config.json 中配置 NoneBot 相关参数：
 
 ```python
 # 机器人账号配置
@@ -84,7 +84,7 @@ COMMAND_START = {"!", "/"}  # 命令前缀
 ```
 
 ### Web 界面配置
-在 config/web_config.py 中配置 Web 服务参数：
+在 config/web_config.json 中配置 Web 服务参数：
 ```python
 # Web 服务配置
 HOST = "0.0.0.0"  # 监听地址
