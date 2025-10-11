@@ -39,7 +39,7 @@ python start.py
 python main.py
 ```
 访问系统
-服务启动后，访问 http://localhost:8080/web_ui 进入管理界面，默认账号密码为 admin/admin123（首次登录后请及时修改密码）。
+服务启动后，访问 http://127.0.0.1:8080/web_ui 进入管理界面，默认账号密码为 admin/admin123（首次登录后请及时修改密码）。
 
 ```text
 nonebot2-with-webui/
