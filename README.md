@@ -1,4 +1,4 @@
-# nonebot2-with-webui
+# nonebot2-with-webui[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/qingxuanya/nonebot2-with-webui)
 
 基于 NoneBot2 的 Web 管理系统，提供完整的可视化后台界面，支持通过浏览器管理机器人实例、插件、群组等功能。
 
